@@ -1,1 +1,929 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С 1 Сентября, Иван Васильевич!</title>
+    <style>
+        /* === Стиль как в старом терминале === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background-color: #0a0f0a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', monospace;
+            padding: 20px;
+            transition: background-color 0.5s;
+        }
+
+        body.exploding {
+            background-color: #1a0000 !important;
+            animation: shake 0.1s infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-5px, 5px); }
+            50% { transform: translate(5px, -5px); }
+            75% { transform: translate(-5px, -5px); }
+        }
+
+        .monitor {
+            background-color: #1a2a1a;
+            padding: 25px;
+            border-radius: 30px;
+            box-shadow: 
+                0 0 0 4px #2a3a2a,
+                0 0 0 8px #0f140f,
+                inset 0 0 20px rgba(0, 0, 0, 0.8);
+            max-width: 950px;
+            width: 100%;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .monitor.exploding {
+            animation: monitorShake 0.05s infinite;
+            box-shadow: 
+                0 0 0 4px #ff0000,
+                0 0 0 8px #ff3300,
+                inset 0 0 50px rgba(255, 0, 0, 0.5);
+            border-color: #ff0000;
+        }
+
+        @keyframes monitorShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(1deg) scale(1.01); }
+            75% { transform: rotate(-1deg) scale(0.99); }
+        }
+
+        .screen {
+            background-color: #0b1a0b;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 255, 65, 0.1),
+                0 0 20px rgba(0, 255, 65, 0.05);
+            border: 2px solid #2a4a2a;
+            min-height: 550px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .screen.exploding {
+            background-color: #0a0000 !important;
+            border-color: #ff0000 !important;
+            box-shadow: 
+                inset 0 0 80px rgba(255, 0, 0, 0.3),
+                0 0 60px rgba(255, 0, 0, 0.2) !important;
+            animation: screenFlicker 0.05s infinite;
+        }
+
+        @keyframes screenFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .screen::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 2px,
+                transparent 2px,
+                transparent 6px
+            );
+            pointer-events: none;
+            border-radius: 10px;
+            z-index: 2;
+        }
+
+        #terminalOutput {
+            color: #33ff33;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            flex: 1;
+            min-height: 350px;
+            position: relative;
+            z-index: 1;
+            max-height: 450px;
+            overflow-y: auto;
+            transition: color 0.3s;
+        }
+
+        #terminalOutput.exploding {
+            color: #ff3333 !important;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important;
+            animation: textGlitch 0.1s infinite;
+        }
+
+        @keyframes textGlitch {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-2px, 1px); }
+            75% { transform: translate(2px, -1px); }
+        }
+
+        #terminalOutput::-webkit-scrollbar {
+            width: 6px;
+            background: #0b1a0b;
+        }
+
+        #terminalOutput::-webkit-scrollbar-thumb {
+            background: #1a4a1a;
+            border-radius: 3px;
+        }
+
+        .input-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-prompt {
+            color: #33ff33;
+            font-size: 1.2rem;
+            text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .input-prompt.exploding {
+            color: #ff3333 !important;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important;
+        }
+
+        #userInput {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #33ff33;
+            color: #33ff33;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            padding: 5px 10px;
+            flex: 1;
+            outline: none;
+            text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+            box-shadow: 0 0 15px rgba(51, 255, 51, 0.05);
+            min-width: 150px;
+            transition: all 0.3s;
+        }
+
+        #userInput::placeholder {
+            color: #1a4a1a;
+            opacity: 0.5;
+        }
+
+        #userInput.exploding {
+            border-bottom-color: #ff0000 !important;
+            color: #ff3333 !important;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5) !important;
+        }
+
+        #sendBtn {
+            background: #1a3a1a;
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            padding: 8px 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 4px;
+            text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+        }
+
+        #sendBtn:hover {
+            background: #33ff33;
+            color: #0b1a0b;
+            box-shadow: 0 0 30px rgba(51, 255, 51, 0.2);
+        }
+
+        #sendBtn.exploding {
+            border-color: #ff0000 !important;
+            color: #ff3333 !important;
+            background: #1a0000 !important;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 1.5rem;
+            background-color: #33ff33;
+            box-shadow: 0 0 15px #33ff33;
+            margin-left: 5px;
+            vertical-align: text-bottom;
+            animation: blink 0.9s step-end infinite;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .cursor.exploding {
+            background-color: #ff0000 !important;
+            box-shadow: 0 0 30px #ff0000 !important;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .footer-glitch {
+            margin-top: 20px;
+            color: #1a5a1a;
+            text-align: center;
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            border-top: 1px solid #1a3a1a;
+            padding-top: 15px;
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s, border-color 0.3s;
+        }
+
+        .footer-glitch.exploding {
+            color: #5a0000 !important;
+            border-top-color: #5a0000 !important;
+        }
+
+        .error-text {
+            color: #ff6b6b !important;
+            text-shadow: 0 0 15px rgba(255, 51, 51, 0.3) !important;
+        }
+
+        /* === СТИЛЬ ДЛЯ ТАБЛИЦЫ === */
+        .schedule-table {
+            border-collapse: collapse;
+            margin: 8px auto;
+            width: auto;
+            min-width: 60%;
+            border: 1px solid #33ff33;
+        }
+
+        .schedule-table th,
+        .schedule-table td {
+            border: 1px solid #33ff33;
+            padding: 6px 20px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 1.05rem;
+            color: #33ff33;
+        }
+
+        .schedule-table th {
+            color: #4ecdc4;
+            border-bottom: 2px solid #33ff33;
+            text-align: center;
+        }
+
+        .schedule-table .time-col {
+            color: #4ecdc4;
+            text-align: center;
+            width: 80px;
+        }
+
+        .schedule-table .subject-col {
+            color: #ffd93d;
+            padding-left: 25px;
+        }
+
+        .schedule-table .subject-col .icon {
+            margin-right: 10px;
+        }
+
+        /* Частицы взрыва */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: 20px;
+            animation: particleFly 1.5s ease-out forwards;
+        }
+
+        @keyframes particleFly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(0) rotate(720deg);
+            }
+        }
+
+        .explosion-symbol {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            font-size: 30px;
+            font-weight: bold;
+            animation: symbolExplode 1s ease-out forwards;
+        }
+
+        @keyframes symbolExplode {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+                color: #ff3333;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(3);
+                color: #ff6600;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .screen {
+                padding: 20px 15px;
+            }
+            #terminalOutput {
+                font-size: 0.95rem;
+                line-height: 1.6;
+                max-height: 350px;
+            }
+            .input-prompt, #userInput, #sendBtn {
+                font-size: 1rem;
+            }
+            .cursor {
+                height: 1.2rem;
+                width: 10px;
+            }
+            .input-line {
+                flex-wrap: wrap;
+            }
+            #userInput {
+                min-width: 120px;
+            }
+            .schedule-table th,
+            .schedule-table td {
+                padding: 4px 10px;
+                font-size: 0.85rem;
+            }
+            .schedule-table .time-col {
+                width: 55px;
+            }
+            .schedule-table .subject-col {
+                padding-left: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="monitor" id="monitor">
+    <div class="screen" id="screen">
+        <div id="terminalOutput" class="terminal-text"></div>
+        
+        <div class="input-line" id="inputLine">
+            <span class="input-prompt" id="prompt">></span>
+            <input type="text" id="userInput" placeholder="введите команду..." autofocus>
+            <button id="sendBtn">⏎</button>
+        </div>
+
+        <div class="footer-glitch" id="footer">
+            // SYSTEM: INTERACTIVE // 02.09.2026 // POWERED BY IVAN SHUSTOV
+        </div>
+    </div>
+</div>
+
+<script>
+    // === НАСТРОЙКИ ===
+    const allowedNames = [
+        "иван фадеенко",
+        "иван васильевич",
+        "иван фадеенко!",
+        "иван васильевич!",
+        "иван",
+        "васильевич",
+        "фадеенко"
+    ];
+
+    // === СОСТОЯНИЕ ===
+    let isAuthenticated = false;
+    let isExploding = false;
+
+    // === ЭЛЕМЕНТЫ ===
+    const outputEl = document.getElementById('terminalOutput');
+    const inputField = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const inputLine = document.getElementById('inputLine');
+    const prompt = document.getElementById('prompt');
+    const footer = document.getElementById('footer');
+    const monitor = document.getElementById('monitor');
+    const screen = document.getElementById('screen');
+
+    // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
+
+    function typeText(text, callback, speed = 25) {
+        const cursor = outputEl.querySelector('.cursor');
+        if (cursor) cursor.remove();
+
+        outputEl.innerHTML = '';
+        let index = 0;
+        const interval = setInterval(() => {
+            if (index < text.length) {
+                let char = text.charAt(index);
+                if (char === ' ') char = '&nbsp;';
+                else if (char === '\n') char = '<br>';
+                outputEl.innerHTML += char;
+                index++;
+                outputEl.scrollTop = outputEl.scrollHeight;
+            } else {
+                clearInterval(interval);
+                const cursorSpan = document.createElement('span');
+                cursorSpan.className = 'cursor';
+                outputEl.appendChild(cursorSpan);
+                if (callback) callback();
+            }
+        }, speed);
+    }
+
+    function clearAndType(text, callback, speed = 25) {
+        const cursor = outputEl.querySelector('.cursor');
+        if (cursor) cursor.remove();
+        outputEl.innerHTML = '';
+        typeText(text, callback, speed);
+    }
+
+    function showHtml(html, callback) {
+        const cursor = outputEl.querySelector('.cursor');
+        if (cursor) cursor.remove();
+        outputEl.innerHTML = html;
+        const cursorSpan = document.createElement('span');
+        cursorSpan.className = 'cursor';
+        outputEl.appendChild(cursorSpan);
+        if (callback) callback();
+    }
+
+    function checkName(name) {
+        const cleanName = name.trim().toLowerCase();
+        return allowedNames.some(allowed => cleanName.includes(allowed) || allowed.includes(cleanName));
+    }
+
+    // === ФУНКЦИЯ ВЗРЫВА ===
+    function explodeSystem() {
+        if (isExploding) return;
+        isExploding = true;
+
+        inputField.disabled = true;
+        sendBtn.disabled = true;
+
+        const explosionMsg = `
+╔══════════════════════════════════════════════
+║    ⚠️⚠️⚠️ ЭКСТРЕННОЕ УДАЛЕНИЕ СИСТЕМЫ ⚠️⚠️⚠️
+║    ИНИЦИАЛИЗАЦИЯ ПРОТОКОЛА "ДАННЫЙ ВЗРЫВ"
+║    УДАЛЕНИЕ ФАЙЛОВ... ████░░░░░░ 40%
+║    УДАЛЕНИЕ ФАЙЛОВ... ██████░░░░ 60%
+║    УДАЛЕНИЕ ФАЙЛОВ... ████████░░ 80%
+║    УДАЛЕНИЕ ФАЙЛОВ... ██████████ 100%
+║    💀 СИСТЕМА УНИЧТОЖЕНА! 💀
+╚══════════════════════════════════════════════
+        `;
+
+        const cursor = outputEl.querySelector('.cursor');
+        if (cursor) cursor.remove();
+        outputEl.innerHTML = '';
+
+        let idx = 0;
+        const interval = setInterval(() => {
+            if (idx < explosionMsg.length) {
+                let char = explosionMsg.charAt(idx);
+                if (char === ' ') char = '&nbsp;';
+                else if (char === '\n') char = '<br>';
+                outputEl.innerHTML += char;
+                idx++;
+                outputEl.scrollTop = outputEl.scrollHeight;
+            } else {
+                clearInterval(interval);
+                startExplosionEffects();
+            }
+        }, 20);
+    }
+
+    function startExplosionEffects() {
+        monitor.classList.add('exploding');
+        screen.classList.add('exploding');
+        outputEl.classList.add('exploding');
+        prompt.classList.add('exploding');
+        inputField.classList.add('exploding');
+        sendBtn.classList.add('exploding');
+        footer.classList.add('exploding');
+        document.body.classList.add('exploding');
+
+        const symbols = ['0', '1', '█', '▄', '▀', '⎚', '⌘', '⏻', '✖', '⚡', '💥', '☠', '⚠', '■', '□', '◆', '◇', '▲', '▼'];
+        const colors = ['#ff0000', '#ff3300', '#ff6600', '#ff9900', '#ffcc00', '#ff0033', '#cc0033'];
+
+        for (let i = 0; i < 80; i++) {
+            setTimeout(() => {
+                const symbol = document.createElement('div');
+                symbol.className = 'explosion-symbol';
+                symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                symbol.style.left = (Math.random() * 100) + 'vw';
+                symbol.style.top = (Math.random() * 100) + 'vh';
+                symbol.style.fontSize = (20 + Math.random() * 40) + 'px';
+                symbol.style.color = colors[Math.floor(Math.random() * colors.length)];
+                symbol.style.setProperty('--tx', (Math.random() * 400 - 200) + 'px');
+                symbol.style.setProperty('--ty', (Math.random() * 400 - 200) + 'px');
+                document.body.appendChild(symbol);
+                setTimeout(() => symbol.remove(), 1500);
+            }, i * 20);
+        }
+
+        for (let i = 0; i < 120; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = ['*', '•', '·', '°', '✦', '✧'][Math.floor(Math.random() * 6)];
+                particle.style.left = (Math.random() * 100) + 'vw';
+                particle.style.top = (Math.random() * 100) + 'vh';
+                particle.style.fontSize = (8 + Math.random() * 20) + 'px';
+                particle.style.color = ['#ff3333', '#ff6600', '#ffcc00', '#ff0033', '#ff9966'][Math.floor(Math.random() * 5)];
+                particle.style.setProperty('--tx', (Math.random() * 600 - 300) + 'px');
+                particle.style.setProperty('--ty', (Math.random() * 600 - 300) + 'px');
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1600);
+            }, i * 15);
+        }
+
+        setTimeout(() => {
+            const finalMsg = `
+╔══════════════════════════════════════════════
+║    💀💀💀 СИСТЕМА УНИЧТОЖЕНА 💀💀💀
+║    ВСЕ ДАННЫЕ УДАЛЕНЫ
+║    ОПЕРАЦИОННАЯ СИСТЕМА РАЗРУШЕНА
+║    ████████████ 100% уничтожено
+║    Нажмите Enter для перезагрузки...
+╚══════════════════════════════════════════════
+            `;
+            const c = outputEl.querySelector('.cursor');
+            if (c) c.remove();
+            outputEl.innerHTML = '';
+            let fi = 0;
+            const finterval = setInterval(() => {
+                if (fi < finalMsg.length) {
+                    let char = finalMsg.charAt(fi);
+                    if (char === ' ') char = '&nbsp;';
+                    else if (char === '\n') char = '<br>';
+                    outputEl.innerHTML += char;
+                    fi++;
+                    outputEl.scrollTop = outputEl.scrollHeight;
+                } else {
+                    clearInterval(finterval);
+                    const newCursor = document.createElement('span');
+                    newCursor.className = 'cursor exploding';
+                    outputEl.appendChild(newCursor);
+                    
+                    const enterHandler = function(e) {
+                        if (e.key === 'Enter') {
+                            document.removeEventListener('keydown', enterHandler);
+                            location.reload();
+                        }
+                    };
+                    document.addEventListener('keydown', enterHandler);
+                    inputField.focus();
+                }
+            }, 20);
+        }, 2500);
+    }
+
+    // === МЕНЮ ===
+    function showMenu() {
+        const menu = `
+╔══════════════════════════════════════════════
+║    ДОСТУПНЫЕ КОМАНДЫ:
+║
+║    [1] - Расписание на 2 сентября
+║    [2] - Код удачи на сегодня
+║    [3] - Информация о системе
+║    [4] - ⚠️ ЭКСТРЕННОЕ УДАЛЕНИЕ СИСТЕМЫ
+║    [0] - Выход / Перезагрузка
+╚══════════════════════════════════════════════
+
+> Введите номер команды (0-4):
+        `;
+        clearAndType(menu, () => {
+            inputField.focus();
+            inputField.placeholder = 'введите 0-4...';
+            inputField.disabled = false;
+            sendBtn.disabled = false;
+        }, 20);
+    }
+
+    // === 1. РАСПИСАНИЕ ===
+    function showSchedule() {
+        const html = `
+╔══════════════════════════════════════════════
+║    📅 РАСПИСАНИЕ НА 2 СЕНТЯБРЯ:
+║
+<table class="schedule-table">
+    <tr>
+        <th>⏰ Время</th>
+        <th>📚 Урок</th>
+    </tr>
+    <tr>
+        <td class="time-col">08:00</td>
+        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
+    </tr>
+    <tr>
+        <td class="time-col">08:45</td>
+        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
+    </tr>
+    <tr>
+        <td class="time-col">09:30</td>
+        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
+    </tr>
+    <tr>
+        <td class="time-col">10:15</td>
+        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
+    </tr>
+    <tr>
+        <td class="time-col">11:00</td>
+        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
+    </tr>
+    <tr>
+        <td class="time-col">11:45</td>
+        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
+    </tr>
+    <tr>
+        <td class="time-col">12:30</td>
+        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
+    </tr>
+</table>
+║    Может когда-то такой день и будет...
+╚══════════════════════════════════════════════
+
+> Нажмите Enter для возврата в меню...
+        `;
+        showHtml(html, () => {
+            inputField.placeholder = 'нажмите Enter...';
+            inputField.value = '';
+            inputField.focus();
+            const enterHandler = function(e) {
+                if (e.key === 'Enter') {
+                    inputField.removeEventListener('keydown', enterHandler);
+                    showMenu();
+                }
+            };
+            inputField.addEventListener('keydown', enterHandler);
+        });
+    }
+
+    // === 2. КОД УДАЧИ ===
+    function showLuckCode() {
+        const codes = [
+            "42 — ответ на главный вопрос жизни, вселенной и всего такого",
+            "0x7E1 — удача будет сопутствовать в программировании",
+            "01101001 — бинарный код удачи (I в ASCII)",
+            "404 — ошибка не найдена, удача найдена!",
+            "200 OK — всё будет отлично!",
+            "3.14 — число Пи, округлите успех!"
+        ];
+        const randomCode = codes[Math.floor(Math.random() * codes.length)];
+        const luck = `
+╔══════════════════════════════════════════════
+║    🍀 ВАШ КОД УДАЧИ НА СЕГОДНЯ:
+║
+║    ${randomCode}
+║
+║    Сохраните этот код в памяти!
+╚══════════════════════════════════════════════
+
+> Нажмите Enter для возврата в меню...
+        `;
+        clearAndType(luck, () => {
+            inputField.placeholder = 'нажмите Enter...';
+            inputField.value = '';
+            const enterHandler = function(e) {
+                if (e.key === 'Enter') {
+                    inputField.removeEventListener('keydown', enterHandler);
+                    showMenu();
+                }
+            };
+            inputField.addEventListener('keydown', enterHandler);
+        }, 20);
+    }
+
+    // === 3. ИНФО (9-Е) ===
+    function showSystemInfo() {
+        const info = `
+╔══════════════════════════════════════════════
+║    📊 ИНФОРМАЦИЯ О СИСТЕМЕ
+║
+║    Система:   EDUCATIONAL_TERMINAL v2.0
+║    Дата:      02.09.2026
+║    Пользователь: Иван Шустов
+║    Класс:     9-Е
+║    Предмет:    Информатика
+║    Статус:     🟢 Активен
+║
+║    "Знание — сила, а информатика —
+║     суперсила!" 🦸
+╚══════════════════════════════════════════════
+
+> Нажмите Enter для возврата в меню...
+        `;
+        clearAndType(info, () => {
+            inputField.placeholder = 'нажмите Enter...';
+            inputField.value = '';
+            const enterHandler = function(e) {
+                if (e.key === 'Enter') {
+                    inputField.removeEventListener('keydown', enterHandler);
+                    showMenu();
+                }
+            };
+            inputField.addEventListener('keydown', enterHandler);
+        }, 20);
+    }
+
+    // === 0. ВЫХОД ===
+    function rebootSystem() {
+        const rebootMsg = `
+╔══════════════════════════════════════════════
+║    🔄 ПЕРЕЗАГРУЗКА СИСТЕМЫ...
+║
+║    До свидания, Иван Васильевич!
+║    Спасибо, что были с нами!
+║
+║    ... перезагрузка через 3 секунды ...
+╚══════════════════════════════════════════════
+        `;
+        clearAndType(rebootMsg, () => {
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+        }, 20);
+    }
+
+    // === ОБРАБОТКА КОМАНД ===
+    function handleMenuCommand(input) {
+        const cmd = input.trim();
+
+        switch(cmd) {
+            case '1':
+                showSchedule();
+                break;
+            case '2':
+                showLuckCode();
+                break;
+            case '3':
+                showSystemInfo();
+                break;
+            case '4':
+                if (confirm('⚠️ ВНИМАНИЕ! Это приведет к уничтожению системы! Продолжить?')) {
+                    explodeSystem();
+                } else {
+                    outputEl.innerHTML += `<br>> Команда отменена.`;
+                    const cursorSpan = document.createElement('span');
+                    cursorSpan.className = 'cursor';
+                    outputEl.appendChild(cursorSpan);
+                    inputField.value = '';
+                    inputField.focus();
+                }
+                break;
+            case '0':
+                rebootSystem();
+                break;
+            default:
+                outputEl.innerHTML += `<br><span class="error-text">⚠ Неизвестная команда: "${cmd}"</span>`;
+                outputEl.innerHTML += `<br>> Попробуйте снова (0-4):`;
+                const cursorSpan = document.createElement('span');
+                cursorSpan.className = 'cursor';
+                outputEl.appendChild(cursorSpan);
+                inputField.value = '';
+                inputField.focus();
+        }
+    }
+
+    // === ГЛАВНАЯ ОБРАБОТКА ===
+    function handleSubmit() {
+        const input = inputField.value.trim();
+
+        if (!input) {
+            inputField.value = '';
+            inputField.placeholder = 'введите что-нибудь...';
+            return;
+        }
+
+        const cursor = outputEl.querySelector('.cursor');
+        if (cursor) cursor.remove();
+
+        if (!isAuthenticated) {
+            outputEl.innerHTML += `<br>➤ ${input}`;
+
+            if (checkName(input)) {
+                isAuthenticated = true;
+                inputLine.style.display = 'none';
+                const welcome = `
+╔══════════════════════════════════════════════
+║    ДОСТУП РАЗРЕШЕН! 🟢
+║
+║    С 1 Сентября, Иван Васильевич!
+║
+║    Поздравляет вас ваш ученик —
+║    Шустов Иван.
+║
+║    Желаю вам в новом учебном году:
+║    • Крепкого здоровья
+║    • Терпения и мудрости
+║    • Любознательных учеников
+║    • Интересных проектов
+║
+║    Спасибо за ваши уроки!
+║
+║    Нажмите Enter для продолжения...
+╚══════════════════════════════════════════════
+                `;
+                clearAndType(welcome, () => {
+                    inputLine.style.display = 'flex';
+                    inputField.value = '';
+                    inputField.placeholder = 'нажмите Enter...';
+                    const enterHandler = function(e) {
+                        if (e.key === 'Enter') {
+                            inputField.removeEventListener('keydown', enterHandler);
+                            showMenu();
+                        }
+                    };
+                    inputField.addEventListener('keydown', enterHandler);
+                }, 20);
+            } else {
+                const errorMsg = `
+╔══════════════════════════════════════════════
+║    ❌ ОШИБКА АВТОРИЗАЦИИ!
+║
+║    Доступ запрещен.
+║    Это поздравление для
+║    Ивана Фадеенко (Ивана Васильевича)!
+║
+║    Попробуйте еще раз.
+╚══════════════════════════════════════════════
+
+> Введите имя:
+                `;
+                clearAndType(errorMsg, () => {
+                    inputField.value = '';
+                    inputField.focus();
+                }, 20);
+            }
+        } else {
+            handleMenuCommand(input);
+        }
+    }
+
+    // === СОБЫТИЯ ===
+    sendBtn.addEventListener('click', handleSubmit);
+    inputField.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+    });
+
+    // === СТАРТ ===
+    window.onload = function() {
+        const startMessage = `
+╔══════════════════════════════════════════════
+║    ДОБРО ПОЖАЛОВАТЬ В СИСТЕМУ!
+║
+║    🔐 ТРЕБУЕТСЯ АВТОРИЗАЦИЯ
+║
+║    Это поздравление от ученика
+║    Шустова Ивана.
+║
+║    Пожалуйста, представьтесь:
+╚══════════════════════════════════════════════
+
+> Введите ваше имя:
+        `;
+        typeText(startMessage, () => {
+            inputField.focus();
+            inputField.placeholder = 'введите имя...';
+        }, 20);
+    };
+</script>
+
+</body>
+</html>
