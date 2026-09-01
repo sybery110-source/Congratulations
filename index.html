@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>С 1 Сентября, Иван Васильевич!</title>
     <style>
         /* === Стиль как в старом терминале === */
@@ -19,7 +19,7 @@
             justify-content: center;
             align-items: center;
             font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', monospace;
-            padding: 20px;
+            padding: 10px;
             transition: background-color 0.5s;
         }
 
@@ -37,11 +37,11 @@
 
         .monitor {
             background-color: #1a2a1a;
-            padding: 25px;
-            border-radius: 30px;
+            padding: 15px;
+            border-radius: 20px;
             box-shadow: 
-                0 0 0 4px #2a3a2a,
-                0 0 0 8px #0f140f,
+                0 0 0 3px #2a3a2a,
+                0 0 0 6px #0f140f,
                 inset 0 0 20px rgba(0, 0, 0, 0.8);
             max-width: 950px;
             width: 100%;
@@ -53,8 +53,8 @@
         .monitor.exploding {
             animation: monitorShake 0.05s infinite;
             box-shadow: 
-                0 0 0 4px #ff0000,
-                0 0 0 8px #ff3300,
+                0 0 0 3px #ff0000,
+                0 0 0 6px #ff3300,
                 inset 0 0 50px rgba(255, 0, 0, 0.5);
             border-color: #ff0000;
         }
@@ -67,13 +67,13 @@
 
         .screen {
             background-color: #0b1a0b;
-            padding: 40px 30px;
-            border-radius: 12px;
+            padding: 20px 15px;
+            border-radius: 10px;
             box-shadow: 
                 inset 0 0 30px rgba(0, 255, 65, 0.1),
                 0 0 20px rgba(0, 255, 65, 0.05);
             border: 2px solid #2a4a2a;
-            min-height: 550px;
+            min-height: 450px;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -116,20 +116,21 @@
 
         #terminalOutput {
             color: #33ff33;
-            font-size: 1.15rem;
-            line-height: 1.8;
+            font-size: clamp(0.85rem, 2.5vw, 1.15rem);
+            line-height: 1.7;
             text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
             white-space: pre-wrap;
             word-break: break-word;
             font-weight: 500;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             flex: 1;
-            min-height: 350px;
+            min-height: 300px;
             position: relative;
             z-index: 1;
-            max-height: 450px;
+            max-height: 400px;
             overflow-y: auto;
             transition: color 0.3s;
+            padding-right: 5px;
         }
 
         #terminalOutput.exploding {
@@ -145,7 +146,7 @@
         }
 
         #terminalOutput::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
             background: #0b1a0b;
         }
 
@@ -157,15 +158,16 @@
         .input-line {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 12px;
             position: relative;
             z-index: 1;
+            flex-wrap: wrap;
         }
 
         .input-prompt {
             color: #33ff33;
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
             text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
             font-weight: 500;
             transition: color 0.3s;
@@ -182,19 +184,20 @@
             border-bottom: 2px solid #33ff33;
             color: #33ff33;
             font-family: 'Courier New', monospace;
-            font-size: 1.2rem;
-            padding: 5px 10px;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            padding: 5px 8px;
             flex: 1;
+            min-width: 100px;
             outline: none;
             text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
             box-shadow: 0 0 15px rgba(51, 255, 51, 0.05);
-            min-width: 150px;
             transition: all 0.3s;
         }
 
         #userInput::placeholder {
             color: #1a4a1a;
             opacity: 0.5;
+            font-size: clamp(0.75rem, 2vw, 1rem);
         }
 
         #userInput.exploding {
@@ -207,19 +210,24 @@
             background: #1a3a1a;
             border: 1px solid #33ff33;
             color: #33ff33;
-            padding: 8px 20px;
+            padding: 6px 14px;
             font-family: 'Courier New', monospace;
-            font-size: 1rem;
+            font-size: clamp(0.85rem, 2vw, 1rem);
             cursor: pointer;
             transition: 0.3s;
             border-radius: 4px;
             text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+            white-space: nowrap;
         }
 
         #sendBtn:hover {
             background: #33ff33;
             color: #0b1a0b;
             box-shadow: 0 0 30px rgba(51, 255, 51, 0.2);
+        }
+
+        #sendBtn:active {
+            transform: scale(0.95);
         }
 
         #sendBtn.exploding {
@@ -230,11 +238,11 @@
 
         .cursor {
             display: inline-block;
-            width: 12px;
-            height: 1.5rem;
+            width: 10px;
+            height: 1.3rem;
             background-color: #33ff33;
             box-shadow: 0 0 15px #33ff33;
-            margin-left: 5px;
+            margin-left: 3px;
             vertical-align: text-bottom;
             animation: blink 0.9s step-end infinite;
             transition: background-color 0.3s, box-shadow 0.3s;
@@ -251,17 +259,18 @@
         }
 
         .footer-glitch {
-            margin-top: 20px;
+            margin-top: 15px;
             color: #1a5a1a;
             text-align: center;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
+            font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+            letter-spacing: 2px;
             text-transform: uppercase;
             border-top: 1px solid #1a3a1a;
-            padding-top: 15px;
+            padding-top: 12px;
             position: relative;
             z-index: 1;
             transition: color 0.3s, border-color 0.3s;
+            word-break: break-all;
         }
 
         .footer-glitch.exploding {
@@ -274,22 +283,22 @@
             text-shadow: 0 0 15px rgba(255, 51, 51, 0.3) !important;
         }
 
-        /* === СТИЛЬ ДЛЯ ТАБЛИЦЫ === */
+        /* === СТИЛЬ ДЛЯ ТАБЛИЦЫ (АДАПТИВНАЯ) === */
         .schedule-table {
             border-collapse: collapse;
             margin: 8px auto;
-            width: auto;
-            min-width: 60%;
+            width: 100%;
+            max-width: 100%;
             border: 1px solid #33ff33;
+            font-size: clamp(0.7rem, 2vw, 1.05rem);
         }
 
         .schedule-table th,
         .schedule-table td {
             border: 1px solid #33ff33;
-            padding: 6px 20px;
+            padding: 4px 8px;
             text-align: left;
             font-family: 'Courier New', monospace;
-            font-size: 1.05rem;
             color: #33ff33;
         }
 
@@ -297,21 +306,25 @@
             color: #4ecdc4;
             border-bottom: 2px solid #33ff33;
             text-align: center;
+            font-size: clamp(0.7rem, 2vw, 1rem);
         }
 
         .schedule-table .time-col {
             color: #4ecdc4;
             text-align: center;
-            width: 80px;
+            width: 20%;
+            min-width: 50px;
+            font-size: clamp(0.7rem, 2vw, 1rem);
         }
 
         .schedule-table .subject-col {
             color: #ffd93d;
-            padding-left: 25px;
+            padding-left: 10px;
+            font-size: clamp(0.7rem, 2vw, 1rem);
         }
 
         .schedule-table .subject-col .icon {
-            margin-right: 10px;
+            margin-right: 6px;
         }
 
         /* Частицы взрыва */
@@ -356,38 +369,141 @@
             }
         }
 
+        /* === АДАПТИВ ДЛЯ ТЕЛЕФОНОВ === */
         @media (max-width: 600px) {
+            .monitor {
+                padding: 10px;
+                border-radius: 15px;
+            }
+
             .screen {
-                padding: 20px 15px;
+                padding: 15px 10px;
+                min-height: 400px;
+                border-radius: 8px;
             }
+
             #terminalOutput {
-                font-size: 0.95rem;
-                line-height: 1.6;
+                min-height: 250px;
                 max-height: 350px;
+                font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+                line-height: 1.6;
             }
-            .input-prompt, #userInput, #sendBtn {
-                font-size: 1rem;
-            }
-            .cursor {
-                height: 1.2rem;
-                width: 10px;
-            }
+
             .input-line {
-                flex-wrap: wrap;
+                gap: 5px;
+                margin-top: 10px;
             }
+
             #userInput {
-                min-width: 120px;
+                font-size: clamp(0.8rem, 2.8vw, 1rem);
+                padding: 4px 6px;
+                min-width: 60px;
             }
+
+            #sendBtn {
+                padding: 5px 12px;
+                font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+            }
+
+            .cursor {
+                height: 1.1rem;
+                width: 8px;
+            }
+
+            .footer-glitch {
+                font-size: clamp(0.5rem, 1.8vw, 0.7rem);
+                padding-top: 10px;
+                margin-top: 10px;
+                letter-spacing: 1px;
+            }
+
             .schedule-table th,
             .schedule-table td {
-                padding: 4px 10px;
-                font-size: 0.85rem;
+                padding: 3px 5px;
             }
+
             .schedule-table .time-col {
-                width: 55px;
+                min-width: 40px;
+                padding: 3px 4px;
             }
+
             .schedule-table .subject-col {
-                padding-left: 12px;
+                padding-left: 5px;
+            }
+
+            .schedule-table .subject-col .icon {
+                margin-right: 3px;
+            }
+
+            /* Убираем лишние отступы */
+            .screen::after {
+                display: none;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .screen {
+                padding: 10px 6px;
+                min-height: 350px;
+            }
+
+            #terminalOutput {
+                min-height: 200px;
+                max-height: 300px;
+                font-size: clamp(0.65rem, 2.5vw, 0.8rem);
+                line-height: 1.5;
+            }
+
+            .input-prompt {
+                font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+            }
+
+            #userInput {
+                font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+                padding: 3px 4px;
+            }
+
+            #sendBtn {
+                padding: 4px 8px;
+                font-size: clamp(0.65rem, 2.5vw, 0.8rem);
+            }
+
+            .schedule-table {
+                font-size: clamp(0.55rem, 2vw, 0.7rem);
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 2px 3px;
+            }
+
+            .schedule-table .time-col {
+                min-width: 30px;
+            }
+
+            .footer-glitch {
+                font-size: clamp(0.4rem, 1.5vw, 0.6rem);
+                letter-spacing: 0.5px;
+            }
+        }
+
+        /* Для очень больших экранов */
+        @media (min-width: 1200px) {
+            .screen {
+                padding: 50px 40px;
+            }
+
+            #terminalOutput {
+                font-size: 1.3rem;
+                line-height: 2;
+                max-height: 500px;
+                min-height: 400px;
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 10px 30px;
+                font-size: 1.2rem;
             }
         }
     </style>
