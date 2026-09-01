@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>С 1 Сентября, Иван Васильевич!</title>
     <style>
-        /* === Стиль как в старом терминале === */
         * {
             margin: 0;
             padding: 0;
@@ -283,7 +282,6 @@
             text-shadow: 0 0 15px rgba(255, 51, 51, 0.3) !important;
         }
 
-        /* === СТИЛЬ ДЛЯ ТАБЛИЦЫ (АДАПТИВНАЯ) === */
         .schedule-table {
             border-collapse: collapse;
             margin: 8px auto;
@@ -327,7 +325,95 @@
             margin-right: 6px;
         }
 
-        /* Частицы взрыва */
+        .explosion-window {
+            position: fixed;
+            background: #0a0f0a;
+            border: 2px solid #ff3333;
+            border-radius: 8px;
+            padding: 20px 25px;
+            min-width: 200px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.3), inset 0 0 40px rgba(255, 0, 0, 0.05);
+            z-index: 10000;
+            animation: windowAppear 0.3s ease-out;
+            font-family: 'Courier New', monospace;
+            cursor: move;
+        }
+
+        .explosion-window .win-title {
+            color: #ff3333;
+            font-size: 14px;
+            font-weight: bold;
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+        }
+
+        .explosion-window .win-close {
+            position: absolute;
+            top: 3px;
+            right: 8px;
+            color: #ff3333;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .explosion-window .win-close:hover {
+            color: #ff6666;
+            transform: scale(1.2);
+        }
+
+        .explosion-window .win-content {
+            color: #33ff33;
+            font-size: 22px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(51, 255, 51, 0.2);
+            margin-top: 10px;
+        }
+
+        .explosion-window .win-btn {
+            background: #1a3a1a;
+            border: 1px solid #33ff33;
+            color: #33ff33;
+            padding: 8px 30px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+            text-shadow: 0 0 8px rgba(51, 255, 51, 0.3);
+        }
+
+        .explosion-window .win-btn:hover {
+            background: #33ff33;
+            color: #0b1a0b;
+            box-shadow: 0 0 30px rgba(51, 255, 51, 0.2);
+        }
+
+        .explosion-window .win-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes windowAppear {
+            0% {
+                transform: scale(0.5) rotate(-10deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
         .particle {
             position: fixed;
             pointer-events: none;
@@ -369,7 +455,6 @@
             }
         }
 
-        /* === АДАПТИВ ДЛЯ ТЕЛЕФОНОВ === */
         @media (max-width: 600px) {
             .monitor {
                 padding: 10px;
@@ -417,6 +502,21 @@
                 letter-spacing: 1px;
             }
 
+            .explosion-window {
+                min-width: 140px;
+                min-height: 90px;
+                padding: 15px 15px;
+            }
+
+            .explosion-window .win-content {
+                font-size: 16px;
+            }
+
+            .explosion-window .win-btn {
+                font-size: 12px;
+                padding: 5px 20px;
+            }
+
             .schedule-table th,
             .schedule-table td {
                 padding: 3px 5px;
@@ -435,7 +535,6 @@
                 margin-right: 3px;
             }
 
-            /* Убираем лишние отступы */
             .screen::after {
                 display: none;
             }
@@ -454,18 +553,19 @@
                 line-height: 1.5;
             }
 
-            .input-prompt {
-                font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+            .explosion-window {
+                min-width: 110px;
+                min-height: 70px;
+                padding: 10px 10px;
             }
 
-            #userInput {
-                font-size: clamp(0.7rem, 2.5vw, 0.85rem);
-                padding: 3px 4px;
+            .explosion-window .win-content {
+                font-size: 13px;
             }
 
-            #sendBtn {
-                padding: 4px 8px;
-                font-size: clamp(0.65rem, 2.5vw, 0.8rem);
+            .explosion-window .win-btn {
+                font-size: 10px;
+                padding: 4px 14px;
             }
 
             .schedule-table {
@@ -479,31 +579,6 @@
 
             .schedule-table .time-col {
                 min-width: 30px;
-            }
-
-            .footer-glitch {
-                font-size: clamp(0.4rem, 1.5vw, 0.6rem);
-                letter-spacing: 0.5px;
-            }
-        }
-
-        /* Для очень больших экранов */
-        @media (min-width: 1200px) {
-            .screen {
-                padding: 50px 40px;
-            }
-
-            #terminalOutput {
-                font-size: 1.3rem;
-                line-height: 2;
-                max-height: 500px;
-                min-height: 400px;
-            }
-
-            .schedule-table th,
-            .schedule-table td {
-                padding: 10px 30px;
-                font-size: 1.2rem;
             }
         }
     </style>
@@ -527,7 +602,6 @@
 </div>
 
 <script>
-    // === НАСТРОЙКИ ===
     const allowedNames = [
         "иван фадеенко",
         "иван васильевич",
@@ -538,11 +612,11 @@
         "фадеенко"
     ];
 
-    // === СОСТОЯНИЕ ===
     let isAuthenticated = false;
     let isExploding = false;
+    let windowCounter = 0;
+    let windows = [];
 
-    // === ЭЛЕМЕНТЫ ===
     const outputEl = document.getElementById('terminalOutput');
     const inputField = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
@@ -551,8 +625,6 @@
     const footer = document.getElementById('footer');
     const monitor = document.getElementById('monitor');
     const screen = document.getElementById('screen');
-
-    // === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ===
 
     function typeText(text, callback, speed = 25) {
         const cursor = outputEl.querySelector('.cursor');
@@ -600,7 +672,123 @@
         return allowedNames.some(allowed => cleanName.includes(allowed) || allowed.includes(cleanName));
     }
 
-    // === ФУНКЦИЯ ВЗРЫВА ===
+    function openExplosionWindow(x, y) {
+        windowCounter++;
+        const winId = 'win-' + windowCounter;
+        
+        const offsetX = (Math.random() - 0.5) * 300;
+        const offsetY = (Math.random() - 0.5) * 200;
+        
+        const win = document.createElement('div');
+        win.className = 'explosion-window';
+        win.id = winId;
+        win.style.left = (x + offsetX) + 'px';
+        win.style.top = (y + offsetY) + 'px';
+        win.style.zIndex = 10000 + windowCounter;
+        
+        const width = 180 + Math.random() * 140;
+        const height = 100 + Math.random() * 80;
+        win.style.width = width + 'px';
+        win.style.height = height + 'px';
+        
+        const colors = ['#ff3333', '#ff6600', '#ffcc00', '#ff0033', '#cc0033', '#ff0066'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        win.style.borderColor = randomColor;
+        win.style.boxShadow = `0 0 60px ${randomColor}33, inset 0 0 60px ${randomColor}11`;
+        
+        win.innerHTML = `
+            <span class="win-title">📚 ИНФОРМАТИКА</span>
+            <span class="win-close" onclick="closeWindow('${winId}')">✕</span>
+            <div class="win-content">ИНФОРМАТИКА</div>
+            <button class="win-btn" onclick="openExplosionWindowFromButton(event)">УЧИТЬ</button>
+        `;
+        
+        document.body.appendChild(win);
+        windows.push(winId);
+        
+        makeDraggable(win);
+        
+        setTimeout(() => {
+            closeWindow(winId);
+        }, 15000);
+        
+        return winId;
+    }
+
+    function openExplosionWindowFromButton(event) {
+        event.stopPropagation();
+        const x = event.clientX || 200 + Math.random() * 300;
+        const y = event.clientY || 100 + Math.random() * 200;
+        openExplosionWindow(x, y);
+    }
+
+    function closeWindow(winId) {
+        const win = document.getElementById(winId);
+        if (win) {
+            win.style.transition = 'all 0.3s';
+            win.style.transform = 'scale(0) rotate(20deg)';
+            win.style.opacity = '0';
+            setTimeout(() => {
+                if (win.parentNode) {
+                    win.parentNode.removeChild(win);
+                }
+            }, 300);
+            windows = windows.filter(id => id !== winId);
+        }
+    }
+
+    function makeDraggable(element) {
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        element.onmousedown = dragMouseDown;
+        element.ontouchstart = dragTouchStart;
+
+        function dragMouseDown(e) {
+            e.preventDefault();
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        }
+
+        function dragTouchStart(e) {
+            const touch = e.touches[0];
+            pos3 = touch.clientX;
+            pos4 = touch.clientY;
+            document.ontouchend = closeDragElementTouch;
+            document.ontouchmove = elementDragTouch;
+        }
+
+        function elementDrag(e) {
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            element.style.top = (element.offsetTop - pos2) + 'px';
+            element.style.left = (element.offsetLeft - pos1) + 'px';
+        }
+
+        function elementDragTouch(e) {
+            const touch = e.touches[0];
+            pos1 = pos3 - touch.clientX;
+            pos2 = pos4 - touch.clientY;
+            pos3 = touch.clientX;
+            pos4 = touch.clientY;
+            element.style.top = (element.offsetTop - pos2) + 'px';
+            element.style.left = (element.offsetLeft - pos1) + 'px';
+        }
+
+        function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+
+        function closeDragElementTouch() {
+            document.ontouchend = null;
+            document.ontouchmove = null;
+        }
+    }
+
     function explodeSystem() {
         if (isExploding) return;
         isExploding = true;
@@ -686,6 +874,37 @@
         }
 
         setTimeout(() => {
+            for (let i = 0; i < 6; i++) {
+                setTimeout(() => {
+                    const x = 50 + Math.random() * (window.innerWidth - 300);
+                    const y = 50 + Math.random() * (window.innerHeight - 300);
+                    openExplosionWindow(x, y);
+                }, i * 300);
+            }
+
+            setTimeout(() => {
+                for (let i = 0; i < 6; i++) {
+                    setTimeout(() => {
+                        const x = 50 + Math.random() * (window.innerWidth - 300);
+                        const y = 50 + Math.random() * (window.innerHeight - 300);
+                        openExplosionWindow(x, y);
+                    }, i * 200);
+                }
+            }, 2000);
+
+            setTimeout(() => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const x = 50 + Math.random() * (window.innerWidth - 300);
+                        const y = 50 + Math.random() * (window.innerHeight - 300);
+                        openExplosionWindow(x, y);
+                    }, i * 250);
+                }
+            }, 4000);
+
+        }, 500);
+
+        setTimeout(() => {
             const finalMsg = `
 ╔══════════════════════════════════════════════
 ║    💀💀💀 СИСТЕМА УНИЧТОЖЕНА 💀💀💀
@@ -723,10 +942,9 @@
                     inputField.focus();
                 }
             }, 20);
-        }, 2500);
+        }, 4500);
     }
 
-    // === МЕНЮ ===
     function showMenu() {
         const menu = `
 ╔══════════════════════════════════════════════
@@ -749,7 +967,6 @@
         }, 20);
     }
 
-    // === 1. РАСПИСАНИЕ ===
     function showSchedule() {
         const html = `
 ╔══════════════════════════════════════════════
@@ -808,7 +1025,6 @@
         });
     }
 
-    // === 2. КОД УДАЧИ ===
     function showLuckCode() {
         const codes = [
             "42 — ответ на главный вопрос жизни, вселенной и всего такого",
@@ -843,7 +1059,6 @@
         }, 20);
     }
 
-    // === 3. ИНФО (9-Е) ===
     function showSystemInfo() {
         const info = `
 ╔══════════════════════════════════════════════
@@ -875,7 +1090,6 @@
         }, 20);
     }
 
-    // === 0. ВЫХОД ===
     function rebootSystem() {
         const rebootMsg = `
 ╔══════════════════════════════════════════════
@@ -894,7 +1108,6 @@
         }, 20);
     }
 
-    // === ОБРАБОТКА КОМАНД ===
     function handleMenuCommand(input) {
         const cmd = input.trim();
 
@@ -934,7 +1147,6 @@
         }
     }
 
-    // === ГЛАВНАЯ ОБРАБОТКА ===
     function handleSubmit() {
         const input = inputField.value.trim();
 
@@ -1009,8 +1221,11 @@
         }
     }
 
-    // === СОБЫТИЯ ===
-    sendBtn.addEventListener('click', handleSubmit);
+    sendBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        handleSubmit();
+    });
+
     inputField.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -1018,7 +1233,13 @@
         }
     });
 
-    // === СТАРТ ===
+    sendBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+    });
+
     window.onload = function() {
         const startMessage = `
 ╔══════════════════════════════════════════════
