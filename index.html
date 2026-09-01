@@ -1126,50 +1126,34 @@
     }
 
     function showSchedule() {
-        const html = `
+        const scheduleText = `
 ╔══════════════════════════════════════════════
 ║    📅 РАСПИСАНИЕ НА 2 СЕНТЯБРЯ:
 ║
-<table class="schedule-table">
-    <tr>
-        <th>⏰ Время</th>
-        <th>📚 Урок</th>
-    </tr>
-    <tr>
-        <td class="time-col">08:00</td>
-        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
-    </tr>
-    <tr>
-        <td class="time-col">08:45</td>
-        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
-    </tr>
-    <tr>
-        <td class="time-col">09:30</td>
-        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
-    </tr>
-    <tr>
-        <td class="time-col">10:15</td>
-        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
-    </tr>
-    <tr>
-        <td class="time-col">11:00</td>
-        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
-    </tr>
-    <tr>
-        <td class="time-col">11:45</td>
-        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
-    </tr>
-    <tr>
-        <td class="time-col">12:30</td>
-        <td class="subject-col"><span class="icon">📚</span>ИНФОРМАТИКА</td>
-    </tr>
-</table>
+║    ╔═══════════════════════════════════════╗
+║    ║  ⏰ Время   │  📚 Урок              ║
+║    ╟───────────────────────────────────────╢
+║    ║  08:00      │  📚 ИНФОРМАТИКА       ║
+║    ╟───────────────────────────────────────╢
+║    ║  08:45      │  📚 ИНФОРМАТИКА       ║
+║    ╟───────────────────────────────────────╢
+║    ║  09:30      │  📚 ИНФОРМАТИКА       ║
+║    ╟───────────────────────────────────────╢
+║    ║  10:15      │  📚 ИНФОРМАТИКА       ║
+║    ╟───────────────────────────────────────╢
+║    ║  11:00      │  📚 ИНФОРМАТИКА       ║
+║    ╟───────────────────────────────────────╢
+║    ║  11:45      │  📚 ИНФОРМАТИКА       ║
+║    ╟───────────────────────────────────────╢
+║    ║  12:30      │  📚 ИНФОРМАТИКА       ║
+║    ╚═══════════════════════════════════════╝
+║
 ║    Может когда-то такой день и будет...
 ╚══════════════════════════════════════════════
 
 > Нажмите Enter для возврата в меню...
         `;
-        showHtml(html, () => {
+        clearAndType(scheduleText, () => {
             waitingForEnter = true;
             inputField.placeholder = 'нажмите Enter...';
             inputField.value = '';
@@ -1179,7 +1163,7 @@
                 enterCallback = null;
                 showMenu();
             };
-        });
+        }, 15);
     }
 
     function showLuckCode() {
@@ -1227,9 +1211,6 @@
 ║    Класс:     9-Е
 ║    Предмет:    Информатика
 ║    Статус:     🟢 Активен
-║
-║    "Знание — сила, а информатика —
-║     суперсила!" 🦸
 ╚══════════════════════════════════════════════
 
 > Нажмите Enter для возврата в меню...
