@@ -27,11 +27,15 @@
             animation: shake 0.1s infinite;
         }
 
+        body.shaking {
+            animation: shake 0.05s infinite !important;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(-5px, 5px); }
-            50% { transform: translate(5px, -5px); }
-            75% { transform: translate(-5px, -5px); }
+            25% { transform: translate(-10px, 10px); }
+            50% { transform: translate(10px, -10px); }
+            75% { transform: translate(-10px, -10px); }
         }
 
         .monitor {
@@ -455,6 +459,63 @@
             }
         }
 
+        .clicker-image {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            cursor: pointer;
+            border: 3px solid #33ff33;
+            border-radius: 10px;
+            transition: transform 0.1s;
+            display: block;
+            margin: 10px auto;
+            background: #0a1a0a;
+            padding: 10px;
+        }
+
+        .clicker-image:hover {
+            transform: scale(1.05);
+        }
+
+        .clicker-image:active {
+            transform: scale(0.95);
+        }
+
+        .clicker-counter {
+            color: #ffd93d;
+            font-size: 24px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .clicker-progress {
+            color: #4ecdc4;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .number-67 {
+            position: fixed;
+            font-size: 30px;
+            font-weight: bold;
+            color: #ff3333;
+            pointer-events: none;
+            z-index: 9999;
+            animation: number67Fly 3s ease-out forwards;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        @keyframes number67Fly {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(2) rotate(720deg);
+            }
+        }
+
         @media (max-width: 600px) {
             .monitor {
                 padding: 10px;
@@ -517,6 +578,11 @@
                 padding: 5px 20px;
             }
 
+            .clicker-image {
+                width: 120px;
+                height: 120px;
+            }
+
             .schedule-table th,
             .schedule-table td {
                 padding: 3px 5px;
@@ -566,6 +632,11 @@
             .explosion-window .win-btn {
                 font-size: 10px;
                 padding: 4px 14px;
+            }
+
+            .clicker-image {
+                width: 90px;
+                height: 90px;
             }
 
             .schedule-table {
@@ -618,6 +689,8 @@
     let windows = [];
     let waitingForEnter = false;
     let enterCallback = null;
+    let isClickerActive = false;
+    let clickCount = 0;
 
     const outputEl = document.getElementById('terminalOutput');
     const inputField = document.getElementById('userInput');
@@ -702,7 +775,7 @@
             <span class="win-title">📚 ИНФОРМАТИКА</span>
             <span class="win-close" onclick="closeWindow('${winId}')">✕</span>
             <div class="win-content">ИНФОРМАТИКА</div>
-            <button class="win-btn" onclick="openExplosionWindowFromButton(event)">УЧИТЬ</button>
+            <button class="win-btn" onclick="closeWindow('${winId}')">УЧИТЬ</button>
         `;
         
         document.body.appendChild(win);
@@ -715,13 +788,6 @@
         }, 15000);
         
         return winId;
-    }
-
-    function openExplosionWindowFromButton(event) {
-        event.stopPropagation();
-        const x = event.clientX || 200 + Math.random() * 300;
-        const y = event.clientY || 100 + Math.random() * 200;
-        openExplosionWindow(x, y);
     }
 
     function closeWindow(winId) {
@@ -944,6 +1010,97 @@
         }, 4500);
     }
 
+    function startClicker() {
+        if (isClickerActive) return;
+        isClickerActive = true;
+        clickCount = 0;
+
+        const html = `
+╔══════════════════════════════════════════════
+║    🎯 КЛИКЕР 67
+║
+║    Кликай по картинке! Нужно набрать 67 кликов!
+║
+<div class="clicker-counter">Кликов: <span id="clickCounter">0</span> / 67</div>
+<div class="clicker-progress">Прогресс: <span id="clickProgress">0</span>%</div>
+<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%230a1a0a'/%3E%3Ctext x='100' y='110' font-family='Courier New' font-size='80' text-anchor='middle' fill='%2333ff33'%3E67%3C/text%3E%3Ctext x='100' y='150' font-family='Courier New' font-size='20' text-anchor='middle' fill='%234ecdc4'%3EКЛИКАЙ%3C/text%3E%3C/svg%3E" 
+     alt="Кликни меня" 
+     class="clicker-image" 
+     id="clickerImage"
+     onclick="handleClick()">
+║
+║    Нажмите 0 для выхода в меню...
+╚══════════════════════════════════════════════
+        `;
+        showHtml(html, () => {
+            waitingForEnter = false;
+            inputField.placeholder = 'введите 0 для выхода...';
+            inputField.value = '';
+            inputField.focus();
+        });
+    }
+
+    function handleClick() {
+        if (!isClickerActive) return;
+        clickCount++;
+        const counterEl = document.getElementById('clickCounter');
+        const progressEl = document.getElementById('clickProgress');
+        if (counterEl) counterEl.textContent = clickCount;
+        if (progressEl) progressEl.textContent = Math.round((clickCount / 67) * 100);
+
+        if (clickCount >= 67) {
+            isClickerActive = false;
+            document.body.classList.add('shaking');
+            monitor.classList.add('exploding');
+            screen.classList.add('exploding');
+            outputEl.classList.add('exploding');
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const num = document.createElement('div');
+                    num.className = 'number-67';
+                    num.textContent = '67';
+                    num.style.left = (Math.random() * 100) + 'vw';
+                    num.style.top = (Math.random() * 100) + 'vh';
+                    num.style.fontSize = (20 + Math.random() * 60) + 'px';
+                    const colors = ['#ff0000', '#ff3300', '#ff6600', '#ff9900', '#ffcc00', '#ff0033', '#cc0033', '#ff0066', '#33ff33', '#ffd93d'];
+                    num.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    num.style.setProperty('--tx', (Math.random() * 400 - 200) + 'px');
+                    num.style.setProperty('--ty', (Math.random() * 400 - 200) + 'px');
+                    document.body.appendChild(num);
+                    setTimeout(() => num.remove(), 3000);
+                }, i * 50);
+            }
+
+            setTimeout(() => {
+                document.body.classList.remove('shaking');
+                const msg = `
+╔══════════════════════════════════════════════
+║    🎉🎉🎉 67 ДОСТИГНУТО! 🎉🎉🎉
+║
+║    ВЫ КЛИКНУЛИ 67 РАЗ!
+║    СИСТЕМА ПЕРЕПОЛНЕНА ЧИСЛАМИ 67!
+║
+║    Нажмите Enter для продолжения...
+╚══════════════════════════════════════════════
+                `;
+                clearAndType(msg, () => {
+                    waitingForEnter = true;
+                    enterCallback = function() {
+                        waitingForEnter = false;
+                        enterCallback = null;
+                        document.body.classList.remove('shaking');
+                        monitor.classList.remove('exploding');
+                        screen.classList.remove('exploding');
+                        outputEl.classList.remove('exploding');
+                        showMenu();
+                    };
+                    inputField.focus();
+                });
+            }, 5000);
+        }
+    }
+
     function showMenu() {
         const menu = `
 ╔══════════════════════════════════════════════
@@ -953,16 +1110,18 @@
 ║    [2] - Код удачи на сегодня
 ║    [3] - Информация о системе
 ║    [4] - ⚠️ ЭКСТРЕННОЕ УДАЛЕНИЕ СИСТЕМЫ
+║    [67] - 🎯 КЛИКЕР 67
 ║    [0] - Выход / Перезагрузка
 ╚══════════════════════════════════════════════
 
-> Введите номер команды (0-4):
+> Введите номер команды (0,1,2,3,4,67):
         `;
         clearAndType(menu, () => {
             inputField.focus();
-            inputField.placeholder = 'введите 0-4...';
+            inputField.placeholder = 'введите команду...';
             inputField.disabled = false;
             sendBtn.disabled = false;
+            isClickerActive = false;
         }, 20);
     }
 
@@ -1131,12 +1290,15 @@
                     inputField.focus();
                 }
                 break;
+            case '67':
+                startClicker();
+                break;
             case '0':
                 rebootSystem();
                 break;
             default:
                 outputEl.innerHTML += `<br><span class="error-text">⚠ Неизвестная команда: "${cmd}"</span>`;
-                outputEl.innerHTML += `<br>> Попробуйте снова (0-4):`;
+                outputEl.innerHTML += `<br>> Попробуйте снова (0,1,2,3,4,67):`;
                 const cursorSpan = document.createElement('span');
                 cursorSpan.className = 'cursor';
                 outputEl.appendChild(cursorSpan);
@@ -1149,24 +1311,25 @@
         const input = inputField.value.trim();
 
         if (waitingForEnter) {
-            if (input === '' || input.toLowerCase() === 'enter') {
-                inputField.value = '';
-                if (enterCallback) {
-                    const cb = enterCallback;
-                    enterCallback = null;
-                    waitingForEnter = false;
-                    cb();
-                }
-                return;
-            } else {
-                outputEl.innerHTML += `<br>> Неизвестная команда. Нажмите Enter для продолжения...`;
-                const cursorSpan = document.createElement('span');
-                cursorSpan.className = 'cursor';
-                outputEl.appendChild(cursorSpan);
-                inputField.value = '';
-                inputField.focus();
+            inputField.value = '';
+            if (enterCallback) {
+                const cb = enterCallback;
+                enterCallback = null;
+                waitingForEnter = false;
+                cb();
+            }
+            return;
+        }
+
+        if (isClickerActive) {
+            if (input === '0') {
+                isClickerActive = false;
+                showMenu();
                 return;
             }
+            inputField.value = '';
+            inputField.placeholder = 'введите 0 для выхода...';
+            return;
         }
 
         if (!input) {
