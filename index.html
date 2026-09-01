@@ -616,6 +616,8 @@
     let isExploding = false;
     let windowCounter = 0;
     let windows = [];
+    let waitingForEnter = false;
+    let enterCallback = null;
 
     const outputEl = document.getElementById('terminalOutput');
     const inputField = document.getElementById('userInput');
@@ -932,13 +934,10 @@
                     newCursor.className = 'cursor exploding';
                     outputEl.appendChild(newCursor);
                     
-                    const enterHandler = function(e) {
-                        if (e.key === 'Enter') {
-                            document.removeEventListener('keydown', enterHandler);
-                            location.reload();
-                        }
+                    waitingForEnter = true;
+                    enterCallback = function() {
+                        location.reload();
                     };
-                    document.addEventListener('keydown', enterHandler);
                     inputField.focus();
                 }
             }, 20);
@@ -1012,16 +1011,15 @@
 > Нажмите Enter для возврата в меню...
         `;
         showHtml(html, () => {
+            waitingForEnter = true;
             inputField.placeholder = 'нажмите Enter...';
             inputField.value = '';
             inputField.focus();
-            const enterHandler = function(e) {
-                if (e.key === 'Enter') {
-                    inputField.removeEventListener('keydown', enterHandler);
-                    showMenu();
-                }
+            enterCallback = function() {
+                waitingForEnter = false;
+                enterCallback = null;
+                showMenu();
             };
-            inputField.addEventListener('keydown', enterHandler);
         });
     }
 
@@ -1047,15 +1045,15 @@
 > Нажмите Enter для возврата в меню...
         `;
         clearAndType(luck, () => {
+            waitingForEnter = true;
             inputField.placeholder = 'нажмите Enter...';
             inputField.value = '';
-            const enterHandler = function(e) {
-                if (e.key === 'Enter') {
-                    inputField.removeEventListener('keydown', enterHandler);
-                    showMenu();
-                }
+            inputField.focus();
+            enterCallback = function() {
+                waitingForEnter = false;
+                enterCallback = null;
+                showMenu();
             };
-            inputField.addEventListener('keydown', enterHandler);
         }, 20);
     }
 
@@ -1078,15 +1076,15 @@
 > Нажмите Enter для возврата в меню...
         `;
         clearAndType(info, () => {
+            waitingForEnter = true;
             inputField.placeholder = 'нажмите Enter...';
             inputField.value = '';
-            const enterHandler = function(e) {
-                if (e.key === 'Enter') {
-                    inputField.removeEventListener('keydown', enterHandler);
-                    showMenu();
-                }
+            inputField.focus();
+            enterCallback = function() {
+                waitingForEnter = false;
+                enterCallback = null;
+                showMenu();
             };
-            inputField.addEventListener('keydown', enterHandler);
         }, 20);
     }
 
@@ -1150,6 +1148,27 @@
     function handleSubmit() {
         const input = inputField.value.trim();
 
+        if (waitingForEnter) {
+            if (input === '' || input.toLowerCase() === 'enter') {
+                inputField.value = '';
+                if (enterCallback) {
+                    const cb = enterCallback;
+                    enterCallback = null;
+                    waitingForEnter = false;
+                    cb();
+                }
+                return;
+            } else {
+                outputEl.innerHTML += `<br>> Неизвестная команда. Нажмите Enter для продолжения...`;
+                const cursorSpan = document.createElement('span');
+                cursorSpan.className = 'cursor';
+                outputEl.appendChild(cursorSpan);
+                inputField.value = '';
+                inputField.focus();
+                return;
+            }
+        }
+
         if (!input) {
             inputField.value = '';
             inputField.placeholder = 'введите что-нибудь...';
@@ -1189,13 +1208,13 @@
                     inputLine.style.display = 'flex';
                     inputField.value = '';
                     inputField.placeholder = 'нажмите Enter...';
-                    const enterHandler = function(e) {
-                        if (e.key === 'Enter') {
-                            inputField.removeEventListener('keydown', enterHandler);
-                            showMenu();
-                        }
+                    waitingForEnter = true;
+                    enterCallback = function() {
+                        waitingForEnter = false;
+                        enterCallback = null;
+                        showMenu();
                     };
-                    inputField.addEventListener('keydown', enterHandler);
+                    inputField.focus();
                 }, 20);
             } else {
                 const errorMsg = `
